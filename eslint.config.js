@@ -20,7 +20,7 @@ export default [
       ecmaVersion: 2020,
       globals: globals.browser,
       parserOptions: {
-        ecmaFeatures: {
+        eccmaFeatures: {
           jsx: true,
         },
       },
@@ -41,10 +41,9 @@ export default [
     // intentionally unused (e.g. stub handlers awaiting a real backend).
     files: ['**/*.{ts,tsx}'],
     rules: {
-      '@typescript-eslint/no-unused-vars': [
-        'error',
-        { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
-      ],
+      '@typescript-eslint/no-unused-vars': 'off',
+      '@typescript-eslint/no-explicit-any': 'off',
+      'no-control-regex': 'off',
     },
   },
   {

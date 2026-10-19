@@ -55,18 +55,8 @@ export default function Message({
     setRead(id);
   };
 
-  const safeTitle = typeof title === "string" ? title : "";
-  const safeMessage = typeof message === "string" ? message : "";
   const safeId = typeof id === "string" ? id : "";
   const safeRead = Boolean(read);
-
-  const handleOpen = () => {
-    if (!safeId) {
-      return;
-    }
-    setIsOpen(true);
-    setRead(safeId);
-  };
 
   return (
     <>
@@ -88,8 +78,6 @@ export default function Message({
                   className={`${
                     safeRead
                       ? "text-[#667589]"
-                      : isFullPage
-                      ? "text-white"
                       : "text-black"
                   } font-bold`}
                 >

@@ -1,6 +1,5 @@
-import React, { useState, useCallback, Component, ReactNode } from 'react';
+import React, { useState, useCallback, Component, ReactNode, useMemo } from 'react';
 import { useTheme } from '../context/ThemeContext';
-import { useCallback, useMemo } from 'react';
 import './Layout.css';
 
 /**
@@ -235,7 +234,7 @@ export default function ThemeToggle() {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        cursor: isTransitioning ? 'not-allowed' : 'pointer',
+        cursor: 'pointer',
         color: 'var(--text)',
         transition: 'all var(--duration-normal, 200ms) var(--ease-in-out, cubic-bezier(0.4, 0, 0.2, 1))',
       }}
@@ -245,10 +244,3 @@ export default function ThemeToggle() {
   );
 }
 
-export default function ThemeToggle() {
-  return (
-    <ThemeToggleErrorBoundary>
-      <ThemeToggleInner />
-    </ThemeToggleErrorBoundary>
-  );
-}

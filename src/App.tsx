@@ -9,20 +9,26 @@ import RequireWallet from './components/RequireWallet'
 import Skeleton from './components/Skeleton'
 import Home from './pages/Home'
 import Dashboard from './pages/Dashboard'
-import Vaults from './pages/Vaults'
 import CreateVault from './pages/CreateVault'
 import VaultDetail from './pages/VaultDetail'
-import VaultTransactions from './pages/VaultTransactions'
 import VerifierDashboard from './pages/VerifierDashboard'
 import PendingValidations from './pages/PendingValidations'
 import ValidationDetail from './pages/ValidationDetail'
 import ValidationHistory from './pages/ValidationHistory'
 import HelpCenter from './pages/HelpCenter'
 import NotFound from './pages/NotFound'
+import Vaults from './pages/Vaults'
+import Transactions from './pages/Transactions'
+import Docs from './pages/Docs'
 
 const Analytics = lazy(() => import('./pages/Analytics'))
 const Notification = lazy(() => import('./pages/Notification'))
 const NotificationSettings = lazy(() => import('./pages/NotificationSettings'))
+
+// Test-only: throws during render so the visual suite can snapshot the ErrorBoundary.
+function VisualCrash(): never {
+  throw new Error('Visual regression test crash')
+}
 
 const PageFallback = <Skeleton className="w-full h-screen" />
 
@@ -40,10 +46,11 @@ const PageFallback = <Skeleton className="w-full h-screen" />
  */
 type ProtectedRouteProps = {
   children: ReactNode
+  routeKey?: string
 }
 
-function ProtectedRoute({ children }: ProtectedRouteProps) {
-  return <RequireWallet>{children}</RequireWallet>
+function ProtectedRoute({ children, routeKey }: ProtectedRouteProps) {
+  return <RequireWallet key={routeKey}>{children}</RequireWallet>
 }
 
 /**
@@ -93,13 +100,13 @@ export default function App() {
                 <Route path="/" element={<RouteErrorBoundary><Home /></RouteErrorBoundary>} />
                 <Route path="/dashboard" element={<RouteErrorBoundary><Dashboard /></RouteErrorBoundary>} />
                 <Route path="/vaults" element={<RouteErrorBoundary><Vaults /></RouteErrorBoundary>} />
-                <Route path="/vaults/create" element={<RouteErrorBoundary><ProtectedRoute><CreateVault /></ProtectedRoute></RouteErrorBoundary>} />
-                <Route path="/vaults/:id" element={<RouteErrorBoundary><ProtectedRoute><VaultDetail /></ProtectedRoute></RouteErrorBoundary>} />
-                <Route path="/vaults/:id/transactions" element={<RouteErrorBoundary><VaultTransactions /></RouteErrorBoundary>} />
-                <Route path="/transactions" element={<RouteErrorBoundary><VaultTransactions /></RouteErrorBoundary>} />
+                <Route path="/transactions" element={<RouteErrorBoundary><Transactions /></RouteErrorBoundary>} />
+                <Route path="/docs" element={<RouteErrorBoundary><Docs /></RouteErrorBoundary>} />
+                <Route path="/vaults/create" element={<RouteErrorBoundary><ProtectedRoute routeKey="/vaults/create"><CreateVault /></ProtectedRoute></RouteErrorBoundary>} />
+                <Route path="/vaults/:id" element={<RouteErrorBoundary><ProtectedRoute routeKey="/vaults/:id"><VaultDetail /></ProtectedRoute></RouteErrorBoundary>} />
                 <Route path="/verifier" element={<RouteErrorBoundary><VerifierDashboard /></RouteErrorBoundary>} />
-                <Route path="/verifier/queue" element={<RouteErrorBoundary><ProtectedRoute><PendingValidations /></ProtectedRoute></RouteErrorBoundary>} />
-                <Route path="/verifier/queue/:vaultId" element={<RouteErrorBoundary><ProtectedRoute><ValidationDetail /></ProtectedRoute></RouteErrorBoundary>} />
+                <Route path="/verifier/queue" element={<RouteErrorBoundary><ProtectedRoute routeKey="/verifier/queue"><PendingValidations /></ProtectedRoute></RouteErrorBoundary>} />
+                <Route path="/verifier/queue/:vaultId" element={<RouteErrorBoundary><ProtectedRoute routeKey="/verifier/queue/:vaultId"><ValidationDetail /></ProtectedRoute></RouteErrorBoundary>} />
                 <Route path="/verifier/history" element={<RouteErrorBoundary><ValidationHistory /></RouteErrorBoundary>} />
                 <Route path="/help" element={<RouteErrorBoundary><HelpCenter /></RouteErrorBoundary>} />
                 <Route path="/help/search" element={<RouteErrorBoundary><HelpCenter /></RouteErrorBoundary>} />
@@ -133,6 +140,9 @@ export default function App() {
                     </RouteErrorBoundary>
                   }
                 />
+                {import.meta.env.MODE === 'visual' && (
+                  <Route path="/__visual__/crash" element={<RouteErrorBoundary><VisualCrash /></RouteErrorBoundary>} />
+                )}
                 <Route path="*" element={<RouteErrorBoundary><NotFound /></RouteErrorBoundary>} />
               </Routes>
             </Layout>
